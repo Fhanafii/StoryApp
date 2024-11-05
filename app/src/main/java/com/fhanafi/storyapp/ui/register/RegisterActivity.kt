@@ -11,7 +11,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import com.fhanafi.storyapp.ViewModelFactory
+import com.fhanafi.storyapp.RegisterViewModelFactory
 import com.fhanafi.storyapp.databinding.ActivityRegisterBinding
 import com.fhanafi.storyapp.di.Injection
 
@@ -19,7 +19,7 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
 
     private val signupViewModel: RegisterViewModel by viewModels {
-        ViewModelFactory(Injection.provideRepository(this))
+        RegisterViewModelFactory(Injection.provideRepository(this))
     }
 
 

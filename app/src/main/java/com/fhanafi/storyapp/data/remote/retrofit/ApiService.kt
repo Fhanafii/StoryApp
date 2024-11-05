@@ -1,5 +1,6 @@
 package com.fhanafi.storyapp.data.remote.retrofit
 
+import com.fhanafi.storyapp.data.remote.response.DetailStoryResponse
 import com.fhanafi.storyapp.data.remote.response.LoginResponse
 import com.fhanafi.storyapp.data.remote.response.RegisterResponse
 import com.fhanafi.storyapp.data.remote.response.StoryResponse
@@ -8,6 +9,7 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface ApiService {
     @FormUrlEncoded
@@ -28,4 +30,7 @@ interface ApiService {
 
     @GET("stories")
     suspend fun getStories(): StoryResponse
+
+    @GET("stories/{id}")
+    fun getDetailStory(@Path("id") id: String): DetailStoryResponse
 }

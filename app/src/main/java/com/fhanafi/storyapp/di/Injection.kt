@@ -1,6 +1,7 @@
 package com.fhanafi.storyapp.di
 
 import android.content.Context
+import com.fhanafi.storyapp.data.StoryRepository
 import com.fhanafi.storyapp.data.UserRepository
 import com.fhanafi.storyapp.data.pref.UserPreference
 import com.fhanafi.storyapp.data.pref.dataStore
@@ -20,4 +21,10 @@ object Injection {
 
         return UserRepository.getInstance(pref, apiService)
     }
+
+    fun provideStoryRepository(): StoryRepository {
+        val apiService = ApiConfig().getApiService("")
+        return StoryRepository.getInstance(apiService)
+    }
+
 }

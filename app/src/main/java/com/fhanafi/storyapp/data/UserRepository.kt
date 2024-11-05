@@ -20,10 +20,10 @@ class UserRepository private constructor(
         userPreference.saveSession(user.copy(isLogin = true))
     }
 
-    suspend fun getStories(token: String): StoryResponse {
-        val apiService = ApiConfig().getApiService(token)
-        return apiService.getStories()
-    }
+//    suspend fun getStories(token: String): StoryResponse {
+//        val apiService = ApiConfig().getApiService(token)
+//        return apiService.getStories()
+//    }
 
     fun getSession(): Flow<UserModel> {
         return userPreference.getSession()

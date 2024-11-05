@@ -3,13 +3,14 @@ package com.fhanafi.storyapp
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.fhanafi.storyapp.data.StoryRepository
 import com.fhanafi.storyapp.data.UserRepository
 import com.fhanafi.storyapp.di.Injection
 import com.fhanafi.storyapp.ui.home.HomeViewModel
 import com.fhanafi.storyapp.ui.login.LoginViewModel
 import com.fhanafi.storyapp.ui.register.RegisterViewModel
 
-class ViewModelFactory(private val repository: UserRepository) : ViewModelProvider.NewInstanceFactory() {
+class ViewModelFactory(private val repository: UserRepository , private val storyRepository: StoryRepository) : ViewModelProvider.NewInstanceFactory() {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -21,7 +22,7 @@ class ViewModelFactory(private val repository: UserRepository) : ViewModelProvid
                 LoginViewModel(repository) as T
             }
             modelClass.isAssignableFrom(HomeViewModel::class.java) -> {
-                HomeViewModel(repository) as T
+                HomeViewModel(repository,storyRepository) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
         }
@@ -34,7 +35,9 @@ class ViewModelFactory(private val repository: UserRepository) : ViewModelProvid
         fun getInstance(context: Context): ViewModelFactory {
             if (INSTANCE == null) {
                 synchronized(ViewModelFactory::class.java) {
-                    INSTANCE = ViewModelFactory(Injection.provideRepository(context))
+                    val userRepository = Injection.provideRepository(context)
+                    val storyRepository = Injection.provideStoryRepository()
+                    INSTANCE = ViewModelFactory(userRepository, storyRepository)
                 }
             }
             return INSTANCE as ViewModelFactory
