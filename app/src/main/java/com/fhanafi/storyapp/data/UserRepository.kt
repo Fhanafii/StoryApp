@@ -2,11 +2,8 @@ package com.fhanafi.storyapp.data
 
 import com.fhanafi.storyapp.data.pref.UserModel
 import com.fhanafi.storyapp.data.pref.UserPreference
-<<<<<<< HEAD
 import com.fhanafi.storyapp.data.remote.response.StoryResponse
 import com.fhanafi.storyapp.data.remote.retrofit.ApiConfig
-=======
->>>>>>> 877769ecef66d56bdc771dea6dd7068e33e4d328
 import com.fhanafi.storyapp.data.remote.retrofit.ApiService
 import kotlinx.coroutines.flow.Flow
 
@@ -23,15 +20,11 @@ class UserRepository private constructor(
         userPreference.saveSession(user.copy(isLogin = true))
     }
 
-<<<<<<< HEAD
     suspend fun getStories(token: String): StoryResponse {
         val apiService = ApiConfig().getApiService(token)
         return apiService.getStories()
     }
 
-
-=======
->>>>>>> 877769ecef66d56bdc771dea6dd7068e33e4d328
     fun getSession(): Flow<UserModel> {
         return userPreference.getSession()
     }
