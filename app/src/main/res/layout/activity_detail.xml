@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.detail.DetailStoryActivity">
+
+    <!-- Profile Image -->
+    <ImageView
+        android:id="@+id/iv_detail_photo"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:src="@tools:sample/avatars" />
+
+    <!-- Name Text -->
+    <TextView
+        android:id="@+id/tv_detail_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        app:layout_constraintTop_toBottomOf="@id/iv_detail_photo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        tools:text="Dicoding" />
+
+    <!-- Description Text -->
+    <TextView
+        android:id="@+id/tv_detail_description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        app:layout_constraintTop_toBottomOf="@id/tv_detail_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"
+        tools:text="Don’t give up! Jangan menyerah dan tetap terus belajar dan berusaha. Jangan berpaku dengan kondisi disabilitas. Berkonsentrasi dengan peluang dan kelebihan itu adalah sebuah keharusan. Allah tidak akan mengubah nasib suatu kaum bilamana kaum tersebut tidak berusaha mengubahnya. Bahkan Rasulullah lebih menyukai orang yang bekerja keras dan tidak berpangku tangan. Jadi niatkan semua karena ibadah." />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
