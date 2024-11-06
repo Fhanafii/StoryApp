@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.fhanafi.storyapp.data.StoryRepository
 import com.fhanafi.storyapp.data.UserRepository
 import com.fhanafi.storyapp.di.Injection
+import com.fhanafi.storyapp.ui.detail.DetailStoryViewModel
 import com.fhanafi.storyapp.ui.home.HomeViewModel
 import com.fhanafi.storyapp.ui.login.LoginViewModel
 import com.fhanafi.storyapp.ui.register.RegisterViewModel
@@ -23,6 +24,9 @@ class ViewModelFactory(private val repository: UserRepository , private val stor
             }
             modelClass.isAssignableFrom(HomeViewModel::class.java) -> {
                 HomeViewModel(repository,storyRepository) as T
+            }
+            modelClass.isAssignableFrom(DetailStoryViewModel::class.java) -> {
+                DetailStoryViewModel(storyRepository) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
         }
