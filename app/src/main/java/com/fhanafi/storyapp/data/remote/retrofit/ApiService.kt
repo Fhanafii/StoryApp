@@ -32,5 +32,7 @@ interface ApiService {
     suspend fun getStories(): StoryResponse
 
     @GET("stories/{id}")
-    fun getDetailStory(@Path("id") id: String): DetailStoryResponse
+    suspend fun getDetailStory(
+        @Path("id") storyId: String
+    ): DetailStoryResponse
 }
