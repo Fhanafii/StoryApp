@@ -50,7 +50,7 @@ class HomeFragment : Fragment() {
 
     private fun observeStories(token: String) {
         homeViewModel.getStories(token).observe(viewLifecycleOwner) { stories ->
-            storyAdapter = StoryAdapter(stories)
+            storyAdapter = StoryAdapter(requireContext(), token, stories)
             binding.recyclerView.adapter = storyAdapter
         }
 

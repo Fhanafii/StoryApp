@@ -1,5 +1,7 @@
 package com.fhanafi.storyapp.ui.home
 
+import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,8 +11,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.fhanafi.storyapp.R
 import com.fhanafi.storyapp.data.remote.response.ListStoryItem
+import com.fhanafi.storyapp.ui.detail.DetailStoryActivity
 
-class StoryAdapter(private val storyList: List<ListStoryItem>) : RecyclerView.Adapter<StoryAdapter.StoryViewHolder>() {
+class StoryAdapter(
+    private val context: Context,
+    private val token: String,
+    private val storyList: List<ListStoryItem>
+) : RecyclerView.Adapter<StoryAdapter.StoryViewHolder>() {
 
     inner class StoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val photoImageView: ImageView = itemView.findViewById(R.id.iv_item_photo)
@@ -20,6 +27,14 @@ class StoryAdapter(private val storyList: List<ListStoryItem>) : RecyclerView.Ad
             nameTextView.text = story.name
             story.photoUrl?.let {
                 Glide.with(itemView.context).load(it).into(photoImageView)
+            }
+
+            itemView.setOnClickListener {
+                val intent = Intent(context, DetailStoryActivity::class.java).apply {
+                    putExtra("token", token)
+                    putExtra("storyId", story.id)
+                }
+                context.startActivity(intent)
             }
         }
     }
