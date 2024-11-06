@@ -17,7 +17,6 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    // Initialize HomeViewModel using by viewModels() with a custom factory
     private val homeViewModel: HomeViewModel by viewModels {
         ViewModelFactory.getInstance(requireContext())
     }
