@@ -1,7 +1,6 @@
-package com.fhanafi.storyapp.ui.dashboard
+package com.fhanafi.storyapp.ui.add
 
 import android.Manifest
-import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
@@ -76,7 +75,7 @@ class AddFragment : Fragment() {
         // Set up button listeners
         binding.galleryButton.setOnClickListener { startGallery() }
         binding.cameraButton.setOnClickListener { startCamera() }
-        binding.uploadButton.setOnClickListener { uploadImage() }
+        binding.buttonAdd.setOnClickListener { uploadImage() }
 
         // Observe ViewModel LiveData
         addViewModel.isLoading.observe(viewLifecycleOwner, Observer { showLoading(it) })
