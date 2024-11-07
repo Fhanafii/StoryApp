@@ -10,9 +10,15 @@ import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import com.fhanafi.storyapp.MainActivity
+import com.fhanafi.storyapp.data.pref.UserPreference
+import com.fhanafi.storyapp.data.pref.dataStore
 import com.fhanafi.storyapp.databinding.ActivityWelcomeBinding
 import com.fhanafi.storyapp.ui.login.LoginActivity
 import com.fhanafi.storyapp.ui.register.RegisterActivity
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 class WelcomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityWelcomeBinding
@@ -64,12 +70,42 @@ class WelcomeActivity : AppCompatActivity() {
 
     private fun setupAction() {
         binding.loginButton.setOnClickListener {
-            Log.d("WelcomeActivity", "Login button clicked")
-            startActivity(Intent(this, LoginActivity::class.java))
+            showLoading(true)
+            checkLoginStatus()
         }
 
         binding.signupButton.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
+    }
+
+    private fun checkLoginStatus(){
+        lifecycleScope.launch {
+            val userPreference = UserPreference.getInstance(dataStore)
+            val userSession = userPreference.getSession().first()
+
+            if (userSession.isLogin && userSession.token.isNotEmpty()){
+                navigateToHome()
+            } else{
+                navigateToLogin()
+            }
+        }
+    }
+
+    private fun navigateToLogin() {
+        showLoading(false)
+        startActivity(Intent(this, LoginActivity::class.java))
+        finish()
+    }
+
+    private fun navigateToHome() {
+        showLoading(false)
+        startActivity(Intent(this, MainActivity::class.java))
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        binding.loginButton.isEnabled = !isLoading
+        binding.signupButton.isEnabled = !isLoading
     }
 }
