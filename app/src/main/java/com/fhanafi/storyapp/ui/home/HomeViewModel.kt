@@ -17,6 +17,8 @@ class HomeViewModel(private val repository: UserRepository, private val storyRep
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> get() = _errorMessage
 
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> get() = _isLoading
 
     // Session management
     fun getSession(): LiveData<UserModel> {
@@ -32,11 +34,14 @@ class HomeViewModel(private val repository: UserRepository, private val storyRep
 
     // Fetch stories
     fun getStories(token: String) = liveData(Dispatchers.IO) {
+        _isLoading.postValue(true)
         try {
             val response = storyRepository.getStories(token)
             emit(response.listStory)
         } catch (e: Exception) {
             _errorMessage.postValue("Failed to load data: ${e.message}")
+        }finally {
+            _isLoading.postValue(false)
         }
     }
 

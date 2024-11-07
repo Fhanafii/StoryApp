@@ -44,6 +44,11 @@ class HomeFragment : Fragment() {
             }
         }
 
+        // Observe loading state
+        homeViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            showLoading(isLoading)
+        }
+
         return binding.root
     }
 
@@ -84,6 +89,10 @@ class HomeFragment : Fragment() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     override fun onDestroyView() {
