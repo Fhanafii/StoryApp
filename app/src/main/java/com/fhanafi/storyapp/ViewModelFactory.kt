@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.fhanafi.storyapp.data.StoryRepository
 import com.fhanafi.storyapp.data.UserRepository
 import com.fhanafi.storyapp.di.Injection
-import com.fhanafi.storyapp.ui.dashboard.AddViewModel
+import com.fhanafi.storyapp.ui.add.AddViewModel
 import com.fhanafi.storyapp.ui.detail.DetailStoryViewModel
 import com.fhanafi.storyapp.ui.home.HomeViewModel
 import com.fhanafi.storyapp.ui.login.LoginViewModel
