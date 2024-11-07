@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/navigation_add"
-        android:name="com.fhanafi.storyapp.ui.dashboard.AddFragment"
+        android:name="com.fhanafi.storyapp.ui.add.AddFragment"
         android:label="@string/title_add"
         tools:layout="@layout/fragment_add" />
 
