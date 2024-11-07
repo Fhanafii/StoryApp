@@ -1,4 +1,4 @@
-package com.fhanafi.storyapp.ui.dashboard
+package com.fhanafi.storyapp.ui.add
 
 import android.content.Context
 import android.net.Uri
