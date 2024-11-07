@@ -16,6 +16,7 @@ import androidx.lifecycle.Observer
 import com.fhanafi.storyapp.MainActivity
 import com.fhanafi.storyapp.ViewModelFactory
 import com.fhanafi.storyapp.databinding.ActivityLoginBinding
+import com.fhanafi.storyapp.ui.welcome.WelcomeActivity
 
 class LoginActivity : AppCompatActivity() {
     private val LoginViewModel by viewModels<LoginViewModel> {
@@ -30,7 +31,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupView()
-        checkSession()
+        setupAction()
         playAnimation()
 
         LoginViewModel.isLoading.observe(this, Observer { isLoading ->
@@ -70,21 +71,6 @@ class LoginActivity : AppCompatActivity() {
             start()
         }
     }
-
-
-    private fun checkSession() {
-        LoginViewModel.getSession { userSession ->
-            if (userSession != null && userSession.isLogin && userSession.token.isNotEmpty()) {
-                Log.d("LoginActivity", "Valid session found: $userSession")
-                startActivity(Intent(this, MainActivity::class.java))
-                finish()
-            } else {
-                Log.d("LoginActivity", "No valid session found, setting up login action")
-                setupAction()
-            }
-        }
-    }
-
 
     private fun setupView() {
         @Suppress("DEPRECATION")
@@ -133,5 +119,13 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
-
+    override fun onBackPressed() {
+        @Suppress("DEPRECATION")
+        super.onBackPressed()
+        // Navigate back to WelcomeActivity
+        val intent = Intent(this, WelcomeActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+        startActivity(intent)
+        finish()  // Close LoginActivity
+    }
 }

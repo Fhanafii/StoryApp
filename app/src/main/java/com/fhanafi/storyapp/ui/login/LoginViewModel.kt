@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fhanafi.storyapp.data.UserRepository
 import com.fhanafi.storyapp.data.pref.UserModel
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
@@ -44,14 +43,6 @@ class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
             } finally {
                 _isLoading.value = false
             }
-        }
-    }
-
-
-    fun getSession(onResult: (UserModel?) -> Unit) {
-        viewModelScope.launch {
-            val userSession = userRepository.getSession().firstOrNull()
-            onResult(userSession)
         }
     }
 }
