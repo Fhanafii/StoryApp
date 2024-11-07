@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    tools:context=".ui.dashboard.AddFragment">
+    tools:context=".ui.add.AddFragment">
 
     <!-- Progress Indicator -->
     <com.google.android.material.progressindicator.LinearProgressIndicator
@@ -84,7 +84,7 @@
 
     <!-- Upload Button -->
     <Button
-        android:id="@+id/uploadButton"
+        android:id="@+id/button_add"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
