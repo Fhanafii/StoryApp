@@ -24,20 +24,18 @@ class AddViewModel(private val storyRepository: StoryRepository) : ViewModel() {
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
-    fun uploadStory(token: String, uri: Uri, description: String, context: Context){
+    fun uploadStory(uri: Uri, description: String, lat: Double?, lon: Double?, context: Context) {
         val imageFile = uriToFile(uri, context).reduceFileImage()
 
-        // Prepare multipart/form-data parameters
         val requestImageFile = imageFile.asRequestBody("image/jpeg".toMediaType())
         val imagePart = MultipartBody.Part.createFormData("photo", imageFile.name, requestImageFile)
         val descriptionBody = description.toRequestBody("text/plain".toMediaType())
 
-        // Show loading indicator
         _isLoading.value = true
 
         viewModelScope.launch {
             try {
-                val response = storyRepository.uploadStory(token, imagePart, descriptionBody)
+                val response = storyRepository.uploadStory(imagePart, descriptionBody, lat, lon)
                 _uploadResponse.value = response
             }catch (e: Exception){
                 e.printStackTrace()

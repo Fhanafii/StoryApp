@@ -20,23 +20,20 @@ class HomeViewModel(private val repository: UserRepository, private val storyRep
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
 
-    // Session management
     fun getSession(): LiveData<UserModel> {
         return repository.getSession().asLiveData()
     }
 
-    // Logout function
     fun logout() {
         viewModelScope.launch {
             repository.logout()
         }
     }
 
-    // Fetch stories
-    fun getStories(token: String) = liveData(Dispatchers.IO) {
+    fun getStories() = liveData(Dispatchers.IO) {
         _isLoading.postValue(true)
         try {
-            val response = storyRepository.getStories(token)
+            val response = storyRepository.getStories()
             emit(response.listStory)
         } catch (e: Exception) {
             _errorMessage.postValue("Failed to load data: ${e.message}")

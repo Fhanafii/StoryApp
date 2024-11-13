@@ -15,10 +15,10 @@ class DetailStoryViewModel(private val repository: StoryRepository): ViewModel()
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
 
-    fun getDetailStory(token: String, storyId: String) {
+    fun getDetailStory(storyId: String) {
         viewModelScope.launch {
             try {
-                val detailResponse = repository.getDetailStory(token, storyId)
+                val detailResponse = repository.getDetailStory(storyId)
                 _storyDetail.value = detailResponse
             } catch (e: Exception) {
                 _error.value = e.message

@@ -1,7 +1,10 @@
 package com.fhanafi.storyapp.ui.add
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -36,7 +39,7 @@ class AddFragment : Fragment() {
 
     private var currentImageUri: Uri? = null
 
-    private val requestPermissionLauncher =
+    private val requestCameraPermissionLauncher  =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
                 Toast.makeText(requireContext(), "Permission granted", Toast.LENGTH_SHORT).show()
@@ -44,6 +47,17 @@ class AddFragment : Fragment() {
                 Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_SHORT).show()
             }
         }
+
+    private val requestLocationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                Toast.makeText(requireContext(), "Location permission granted", Toast.LENGTH_SHORT).show()
+                uploadImage() // Proceed with image upload if permission granted
+            } else {
+                Toast.makeText(requireContext(), "Location permission denied", Toast.LENGTH_SHORT).show()
+            }
+        }
+
 
     private val launcherGallery = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
         if (uri != null) {
@@ -57,6 +71,10 @@ class AddFragment : Fragment() {
     private val launcherIntentCamera = registerForActivityResult(ActivityResultContracts.TakePicture()) { isSuccess ->
         if (isSuccess) {
             showImage()
+        } else{
+            currentImageUri = null
+            Toast.makeText(requireContext(), "Failed to capture image", Toast.LENGTH_SHORT).show()
+            Log.d("AddFragment", "Camera capture failed")
         }
     }
 
@@ -68,29 +86,41 @@ class AddFragment : Fragment() {
         _binding = FragmentAddBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        if (!allPermissionsGranted()) {
-            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+        if (!hasCameraPermission()) {
+            requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
         }
 
-        // Set up button listeners
         binding.galleryButton.setOnClickListener { startGallery() }
         binding.cameraButton.setOnClickListener { startCamera() }
-        binding.buttonAdd.setOnClickListener { uploadImage() }
+        binding.buttonAdd.setOnClickListener { handleUploadClick() }
 
-        // Observe ViewModel LiveData
         addViewModel.isLoading.observe(viewLifecycleOwner, Observer { showLoading(it) })
         addViewModel.uploadResponse.observe(viewLifecycleOwner) { response ->
             response?.let {
                 Toast.makeText(requireContext(), "Upload successful: ${it.message}", Toast.LENGTH_SHORT).show()
-                parentFragmentManager.popBackStack() // Go back after successful upload
+                parentFragmentManager.popBackStack()
             }
         }
 
         return root
     }
 
-    private fun allPermissionsGranted() =
+    // Check for camera permission
+    private fun hasCameraPermission() =
         ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+
+    // Check for location permission
+    private fun hasLocationPermission() =
+        ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+
+    // Handle upload button click, requesting location permission if needed
+    private fun handleUploadClick() {
+        if (hasLocationPermission()) {
+            uploadImage()
+        } else {
+            requestLocationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+    }
 
     private fun startGallery() {
         launcherGallery.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
@@ -111,13 +141,21 @@ class AddFragment : Fragment() {
         currentImageUri?.let { uri ->
             val description = binding.edAddDescription.text.toString()
             if (description.isNotEmpty()) {
-                // Retrieve the token from DataStore using UserPreference
+                val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                var location: Location? = null
+                try {
+                    location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+                } catch (e: SecurityException) {
+                    Log.e("AddFragment", "Location permission not granted", e)
+                }
+                val latitude = location?.latitude ?: 0.0
+                val longitude = location?.longitude ?: 0.0
+
                 lifecycleScope.launch {
                     val userPreference = UserPreference.getInstance(requireContext().dataStore)
                     val userSession = userPreference.getSession().first()
-                    val token = userSession.token
-                    if (token.isNotEmpty()) {
-                        addViewModel.uploadStory(token, uri, description, requireContext())
+                    if (userSession.token.isNotEmpty()) {
+                        addViewModel.uploadStory(uri, description, latitude, longitude, requireContext())
                     } else {
                         Toast.makeText(requireContext(), "Failed to retrieve token", Toast.LENGTH_SHORT).show()
                     }
@@ -127,8 +165,6 @@ class AddFragment : Fragment() {
             }
         } ?: Toast.makeText(requireContext(), "No image selected", Toast.LENGTH_SHORT).show()
     }
-
-
 
     private fun showLoading(isLoading: Boolean) {
         binding.progressIndicator.visibility = if (isLoading) View.VISIBLE else View.GONE

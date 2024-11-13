@@ -29,8 +29,8 @@ class WelcomeActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupView()
-        setupAction()
         playAnimation()
+        checkLoginStatus()
     }
 
     private fun playAnimation() {
@@ -39,8 +39,7 @@ class WelcomeActivity : AppCompatActivity() {
             repeatCount = ObjectAnimator.INFINITE
             repeatMode = ObjectAnimator.REVERSE
         }.start()
-        //adding the android:alpha="0" in activity_welcome if you did not set this up the animation also didnt work
-        val login = ObjectAnimator.ofFloat(binding.loginButton, View.ALPHA, 1f).setDuration(500) // set duration to 500 if the animation didnt show up
+        val login = ObjectAnimator.ofFloat(binding.loginButton, View.ALPHA, 1f).setDuration(500)
         val signup = ObjectAnimator.ofFloat(binding.signupButton, View.ALPHA, 1f).setDuration(500)
         val title = ObjectAnimator.ofFloat(binding.titleTextView, View.ALPHA, 1f).setDuration(500)
         val desc = ObjectAnimator.ofFloat(binding.descTextView, View.ALPHA, 1f).setDuration(500)
@@ -71,7 +70,7 @@ class WelcomeActivity : AppCompatActivity() {
     private fun setupAction() {
         binding.loginButton.setOnClickListener {
             showLoading(true)
-            checkLoginStatus()
+            navigateToLogin()
         }
 
         binding.signupButton.setOnClickListener {
@@ -87,7 +86,7 @@ class WelcomeActivity : AppCompatActivity() {
             if (userSession.isLogin && userSession.token.isNotEmpty()){
                 navigateToHome()
             } else{
-                navigateToLogin()
+                setupAction()
             }
         }
     }
@@ -101,6 +100,7 @@ class WelcomeActivity : AppCompatActivity() {
     private fun navigateToHome() {
         showLoading(false)
         startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 
     private fun showLoading(isLoading: Boolean) {

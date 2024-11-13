@@ -16,7 +16,6 @@ class PasswordEditText @JvmOverloads constructor(
         isClickable = true
         isFocusableInTouchMode = true
 
-        // Optional: Add error message if password is less than 8 characters
         doOnTextChanged { text, _, _, _ ->
             if (text != null && text.length < 8) {
                 error = "Password must be at least 8 characters"
