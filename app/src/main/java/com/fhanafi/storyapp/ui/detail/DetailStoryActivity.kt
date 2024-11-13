@@ -27,14 +27,11 @@ class DetailStoryActivity : AppCompatActivity() {
             title = getString(R.string.detail_story_title)
         }
 
-        // Get data passed from previous activity (e.g., token and storyId)
-        val token = intent.getStringExtra("token") ?: ""
+//        val token = intent.getStringExtra("token") ?: ""
         val storyId = intent.getStringExtra("storyId") ?: ""
 
-        // Fetch story details using ViewModel
-        detailStoryViewModel.getDetailStory(token, storyId)
+        detailStoryViewModel.getDetailStory(storyId)
 
-        // Observe story details
         detailStoryViewModel.storyDetail.observe(this) { detailResponse ->
             val story = detailResponse.story
             if (story != null) {
@@ -46,7 +43,6 @@ class DetailStoryActivity : AppCompatActivity() {
             }
         }
 
-        // Observe for any error messages
         detailStoryViewModel.error.observe(this) { errorMessage ->
             errorMessage?.let {
                 Toast.makeText(this, it, Toast.LENGTH_SHORT).show()

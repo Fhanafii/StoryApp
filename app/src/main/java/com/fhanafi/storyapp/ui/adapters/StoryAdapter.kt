@@ -15,7 +15,6 @@ import com.fhanafi.storyapp.ui.detail.DetailStoryActivity
 
 class StoryAdapter(
     private val context: Context,
-    private val token: String,
     private val storyList: List<ListStoryItem>
 ) : RecyclerView.Adapter<StoryAdapter.StoryViewHolder>() {
 
@@ -31,7 +30,6 @@ class StoryAdapter(
 
             itemView.setOnClickListener {
                 val intent = Intent(context, DetailStoryActivity::class.java).apply {
-                    putExtra("token", token)
                     putExtra("storyId", story.id)
                 }
                 context.startActivity(intent)

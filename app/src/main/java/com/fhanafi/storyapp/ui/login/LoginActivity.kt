@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -34,6 +35,15 @@ class LoginActivity : AppCompatActivity() {
         setupAction()
         playAnimation()
 
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val intent = Intent(this@LoginActivity, WelcomeActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                startActivity(intent)
+                finish()
+            }
+        })
+
         LoginViewModel.isLoading.observe(this, Observer { isLoading ->
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
             binding.loginButton.isEnabled = !isLoading
@@ -41,14 +51,12 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun playAnimation() {
-        // ImageView Animation (translation left to right)
         ObjectAnimator.ofFloat(binding.imageView, View.TRANSLATION_X, -30f, 30f).apply {
             duration = 6000
             repeatCount = ObjectAnimator.INFINITE
             repeatMode = ObjectAnimator.REVERSE
         }.start()
 
-        // Sequential fade-in animations for each element
         val titleAnim = ObjectAnimator.ofFloat(binding.titleTextView, View.ALPHA, 1f).setDuration(300)
         val messageAnim = ObjectAnimator.ofFloat(binding.messageTextView, View.ALPHA, 1f).setDuration(300)
         val emailLabelAnim = ObjectAnimator.ofFloat(binding.emailTextView, View.ALPHA, 1f).setDuration(300)
@@ -57,7 +65,6 @@ class LoginActivity : AppCompatActivity() {
         val passwordInputAnim = ObjectAnimator.ofFloat(binding.passwordEditTextLayout, View.ALPHA, 1f).setDuration(300)
         val loginButtonAnim = ObjectAnimator.ofFloat(binding.loginButton, View.ALPHA, 1f).setDuration(300)
 
-        // Play animations sequentially
         AnimatorSet().apply {
             playSequentially(
                 titleAnim,
@@ -94,7 +101,6 @@ class LoginActivity : AppCompatActivity() {
             LoginViewModel.login(email, password) { isSuccess ->
                 if (isSuccess) {
                     Log.d("LoginActivity", "Login successful")
-                    // Note: The token is saved inside `LoginViewModel` when successful
                     AlertDialog.Builder(this).apply {
                         setTitle("Success!")
                         setMessage("Login successful. Welcome!")
@@ -118,14 +124,5 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-    override fun onBackPressed() {
-        @Suppress("DEPRECATION")
-        super.onBackPressed()
-        // Navigate back to WelcomeActivity
-        val intent = Intent(this, WelcomeActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-        startActivity(intent)
-        finish()  // Close LoginActivity
     }
 }

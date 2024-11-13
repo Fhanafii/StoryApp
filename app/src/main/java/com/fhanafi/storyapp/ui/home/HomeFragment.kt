@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.fhanafi.storyapp.R
 import com.fhanafi.storyapp.ViewModelFactory
 import com.fhanafi.storyapp.databinding.FragmentHomeBinding
+import com.fhanafi.storyapp.ui.map.MapsActivity
 import com.fhanafi.storyapp.ui.welcome.WelcomeActivity
 
 class HomeFragment : Fragment() {
@@ -30,21 +31,13 @@ class HomeFragment : Fragment() {
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
-        // Enable options menu in fragment
         @Suppress("DEPRECATION")
         setHasOptionsMenu(true)
 
-        // Setup RecyclerView
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        // Observe the session to get the token and then fetch stories
-        homeViewModel.getSession().observe(viewLifecycleOwner) { userSession ->
-            userSession?.let {
-                observeStories(it.token)
-            }
-        }
+        observeStories() // Remove token parameter
 
-        // Observe loading state
         homeViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             showLoading(isLoading)
         }
@@ -52,13 +45,13 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
-    private fun observeStories(token: String) {
-        homeViewModel.getStories(token).observe(viewLifecycleOwner) { stories ->
-            storyAdapter = StoryAdapter(requireContext(), token, stories)
+    private fun observeStories() {
+        // Fetch stories directly without token
+        homeViewModel.getStories().observe(viewLifecycleOwner) { stories ->
+            storyAdapter = StoryAdapter(requireContext(), stories) // Adjust adapter instantiation
             binding.recyclerView.adapter = storyAdapter
         }
 
-        // Observe for any error messages
         homeViewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
             errorMessage?.let {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
@@ -77,14 +70,16 @@ class HomeFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_logout -> {
-                // Perform logout action here
                 homeViewModel.logout()
-
-                // Navigate to WelcomeActivity after logout
                 val intent = Intent(requireContext(), WelcomeActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
-                activity?.finish() // Close the current activity
+                activity?.finish()
+                true
+            }
+            R.id.action_map -> {
+                val intent = Intent(requireContext(), MapsActivity::class.java)
+                startActivity(intent)
                 true
             }
             else -> super.onOptionsItemSelected(item)

@@ -15,16 +15,18 @@ object Injection {
         val pref = UserPreference.getInstance(context.dataStore)
 
         val user = runBlocking { pref.getSession().first() }
-        val token = user.token ?: "" // Default to empty string if token is null
+        val token = user.token
 
         val apiService = ApiConfig().getApiService(token)
 
         return UserRepository.getInstance(pref, apiService)
     }
 
-    fun provideStoryRepository(): StoryRepository {
-        val apiService = ApiConfig().getApiService("")
-        return StoryRepository.getInstance(apiService)
+    fun provideStoryRepository(context: Context): StoryRepository {
+        val pref = UserPreference.getInstance(context.dataStore)
+        val apiService = ApiConfig().getApiService(runBlocking { pref.getSession().first().token })
+        return StoryRepository.getInstance(apiService, pref)  // Pass `pref` as userPreference
+
     }
 
 }

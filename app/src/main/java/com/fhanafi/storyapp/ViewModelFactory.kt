@@ -10,6 +10,7 @@ import com.fhanafi.storyapp.ui.add.AddViewModel
 import com.fhanafi.storyapp.ui.detail.DetailStoryViewModel
 import com.fhanafi.storyapp.ui.home.HomeViewModel
 import com.fhanafi.storyapp.ui.login.LoginViewModel
+import com.fhanafi.storyapp.ui.map.MapsViewModel
 import com.fhanafi.storyapp.ui.register.RegisterViewModel
 
 class ViewModelFactory(private val repository: UserRepository , private val storyRepository: StoryRepository) : ViewModelProvider.NewInstanceFactory() {
@@ -32,6 +33,9 @@ class ViewModelFactory(private val repository: UserRepository , private val stor
             modelClass.isAssignableFrom(AddViewModel::class.java) -> {
                 AddViewModel(storyRepository) as T
             }
+            modelClass.isAssignableFrom(MapsViewModel::class.java) -> {
+                MapsViewModel(storyRepository) as T
+            }
             else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
         }
     }
@@ -44,7 +48,7 @@ class ViewModelFactory(private val repository: UserRepository , private val stor
             if (INSTANCE == null) {
                 synchronized(ViewModelFactory::class.java) {
                     val userRepository = Injection.provideRepository(context)
-                    val storyRepository = Injection.provideStoryRepository()
+                    val storyRepository = Injection.provideStoryRepository(context)
                     INSTANCE = ViewModelFactory(userRepository, storyRepository)
                 }
             }

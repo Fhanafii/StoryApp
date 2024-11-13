@@ -45,7 +45,6 @@ class RegisterActivity : AppCompatActivity() {
             repeatMode = ObjectAnimator.REVERSE
         }.start()
 
-        // Fade-in animations for each element in sequence
         val titleAnim = ObjectAnimator.ofFloat(binding.titleTextView, View.ALPHA, 1f).setDuration(500)
         val nameAnim = ObjectAnimator.ofFloat(binding.nameTextView, View.ALPHA, 1f).setDuration(300)
         val nameInputAnim = ObjectAnimator.ofFloat(binding.nameEditTextLayout, View.ALPHA, 1f).setDuration(300)
@@ -55,7 +54,6 @@ class RegisterActivity : AppCompatActivity() {
         val passwordInputAnim = ObjectAnimator.ofFloat(binding.passwordEditTextLayout, View.ALPHA, 1f).setDuration(300)
         val signupAnim = ObjectAnimator.ofFloat(binding.signupButton, View.ALPHA, 1f).setDuration(300)
 
-        // Play animations sequentially
         AnimatorSet().apply {
             playSequentially(
                 titleAnim, nameAnim, nameInputAnim,
