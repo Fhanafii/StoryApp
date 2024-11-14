@@ -1,44 +1,47 @@
 package com.fhanafi.storyapp.ui.home
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.liveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.fhanafi.storyapp.data.StoryRepository
 import com.fhanafi.storyapp.data.UserRepository
-import com.fhanafi.storyapp.data.pref.UserModel
-import kotlinx.coroutines.Dispatchers
+import com.fhanafi.storyapp.data.remote.response.ListStoryItem
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
-class HomeViewModel(private val repository: UserRepository, private val storyRepository: StoryRepository) : ViewModel() {
+class HomeViewModel(
+    private val userRepository: UserRepository,
+    private val storyRepository: StoryRepository
+) : ViewModel() {
 
+    // Error and loading states
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> get() = _errorMessage
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
 
-    fun getSession(): LiveData<UserModel> {
-        return repository.getSession().asLiveData()
+    // Refresh trigger
+    private val refreshTrigger = MutableStateFlow(Unit)
+
+    // Stories flow, recreated each time `refreshTrigger` emits
+    val stories: Flow<PagingData<ListStoryItem>> = refreshTrigger
+        .flatMapLatest {
+            storyRepository.getPagedStories().cachedIn(viewModelScope)
+        }
+
+    // Function to trigger a refresh
+    fun refreshStories() {
+        refreshTrigger.value = Unit
+
     }
 
+    // Logout function
     fun logout() {
         viewModelScope.launch {
-            repository.logout()
-        }
-    }
-
-    fun getStories() = liveData(Dispatchers.IO) {
-        _isLoading.postValue(true)
-        try {
-            val response = storyRepository.getStories()
-            emit(response.listStory)
-        } catch (e: Exception) {
-            _errorMessage.postValue("Failed to load data: ${e.message}")
-        }finally {
-            _isLoading.postValue(false)
+            userRepository.logout()
         }
     }
 

@@ -1,4 +1,4 @@
-package com.fhanafi.storyapp.ui.home
+package com.fhanafi.storyapp.ui.adapters
 
 import android.content.Context
 import android.content.Intent
@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.fhanafi.storyapp.R
@@ -14,9 +16,8 @@ import com.fhanafi.storyapp.data.remote.response.ListStoryItem
 import com.fhanafi.storyapp.ui.detail.DetailStoryActivity
 
 class StoryAdapter(
-    private val context: Context,
-    private val storyList: List<ListStoryItem>
-) : RecyclerView.Adapter<StoryAdapter.StoryViewHolder>() {
+    private val context: Context
+) : PagingDataAdapter<ListStoryItem, StoryAdapter.StoryViewHolder>(DIFF_CALLBACK) {
 
     inner class StoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val photoImageView: ImageView = itemView.findViewById(R.id.iv_item_photo)
@@ -43,8 +44,19 @@ class StoryAdapter(
     }
 
     override fun onBindViewHolder(holder: StoryViewHolder, position: Int) {
-        holder.bind(storyList[position])
+        getItem(position)?.let { holder.bind(it) }
     }
 
-    override fun getItemCount(): Int = storyList.size
+    companion object {
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ListStoryItem>() {
+            override fun areItemsTheSame(oldItem: ListStoryItem, newItem: ListStoryItem): Boolean {
+                return oldItem.id == newItem.id
+            }
+
+            override fun areContentsTheSame(oldItem: ListStoryItem, newItem: ListStoryItem): Boolean {
+                return oldItem == newItem
+            }
+        }
+    }
 }
+
