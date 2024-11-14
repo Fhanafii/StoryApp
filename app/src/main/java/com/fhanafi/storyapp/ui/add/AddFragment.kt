@@ -16,6 +16,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -24,6 +25,7 @@ import com.fhanafi.storyapp.ViewModelFactory
 import com.fhanafi.storyapp.data.pref.UserPreference
 import com.fhanafi.storyapp.data.pref.dataStore
 import com.fhanafi.storyapp.databinding.FragmentAddBinding
+import com.fhanafi.storyapp.ui.home.HomeViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -31,6 +33,10 @@ class AddFragment : Fragment() {
 
     private var _binding: FragmentAddBinding? = null
     private val binding get() = _binding!!
+
+    private val homeViewModel: HomeViewModel by activityViewModels {
+        ViewModelFactory.getInstance(requireContext())
+    }
 
     private val addViewModel: AddViewModel by viewModels {
         ViewModelFactory.getInstance(requireContext())
@@ -98,6 +104,7 @@ class AddFragment : Fragment() {
         addViewModel.uploadResponse.observe(viewLifecycleOwner) { response ->
             response?.let {
                 Toast.makeText(requireContext(), "Upload successful: ${it.message}", Toast.LENGTH_SHORT).show()
+                homeViewModel.refreshStories()
                 parentFragmentManager.popBackStack()
             }
         }

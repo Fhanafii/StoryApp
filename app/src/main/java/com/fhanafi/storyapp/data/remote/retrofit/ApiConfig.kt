@@ -1,16 +1,25 @@
 package com.fhanafi.storyapp.data.remote.retrofit
 
+import com.fhanafi.storyapp.data.pref.UserPreference
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class ApiConfig {
-    fun getApiService(token: String): ApiService {
+class ApiConfig(private val userPreference: UserPreference) {
+
+    private suspend fun getToken(): String {
+        return userPreference.getSession().first().token
+    }
+
+    fun getApiService(): ApiService {
         val loggingInterceptor =
             HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
         val authInterceptor = Interceptor { chain ->
+            val token = runBlocking { getToken() }
             val req = chain.request()
             val requestHeaders = req.newBuilder()
                 .addHeader("Authorization", "Bearer $token")

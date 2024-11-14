@@ -6,12 +6,17 @@ import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fhanafi.storyapp.R
 import com.fhanafi.storyapp.ViewModelFactory
 import com.fhanafi.storyapp.databinding.FragmentHomeBinding
+import com.fhanafi.storyapp.ui.adapters.LoadingStateAdapter
+import com.fhanafi.storyapp.ui.adapters.StoryAdapter
 import com.fhanafi.storyapp.ui.map.MapsActivity
 import com.fhanafi.storyapp.ui.welcome.WelcomeActivity
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
 
@@ -34,9 +39,9 @@ class HomeFragment : Fragment() {
         @Suppress("DEPRECATION")
         setHasOptionsMenu(true)
 
-        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        setupRecyclerView()
 
-        observeStories() // Remove token parameter
+        observeStories()
 
         homeViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             showLoading(isLoading)
@@ -45,11 +50,21 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
+    private fun setupRecyclerView() {
+        storyAdapter = StoryAdapter(requireContext())
+        binding.recyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = storyAdapter.withLoadStateFooter(
+                footer = LoadingStateAdapter{storyAdapter.retry()}
+            )
+        }
+    }
+
     private fun observeStories() {
-        // Fetch stories directly without token
-        homeViewModel.getStories().observe(viewLifecycleOwner) { stories ->
-            storyAdapter = StoryAdapter(requireContext(), stories) // Adjust adapter instantiation
-            binding.recyclerView.adapter = storyAdapter
+        viewLifecycleOwner.lifecycleScope.launch {
+            homeViewModel.stories.collectLatest { pagingData ->
+                storyAdapter.submitData(pagingData)
+            }
         }
 
         homeViewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->

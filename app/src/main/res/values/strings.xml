@@ -24,4 +24,5 @@
     <string name="detail_story_title">Story Details</string>
     <string name="map">Map</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="retry">Coba lagi</string>
 </resources>
