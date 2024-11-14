@@ -26,7 +26,9 @@ class StoryAdapter(
         fun bind(story: ListStoryItem) {
             nameTextView.text = story.name
             story.photoUrl?.let {
-                Glide.with(itemView.context).load(it).into(photoImageView)
+                Glide.with(itemView.context)
+                    .load(it)
+                    .into(photoImageView)
             }
 
             itemView.setOnClickListener {

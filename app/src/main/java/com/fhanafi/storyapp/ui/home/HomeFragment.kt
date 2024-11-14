@@ -95,6 +95,8 @@ class HomeFragment : Fragment() {
             R.id.action_map -> {
                 val intent = Intent(requireContext(), MapsActivity::class.java)
                 startActivity(intent)
+                // Optional transition animation
+                activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                 true
             }
             else -> super.onOptionsItemSelected(item)

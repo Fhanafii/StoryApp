@@ -148,20 +148,35 @@ class AddFragment : Fragment() {
         currentImageUri?.let { uri ->
             val description = binding.edAddDescription.text.toString()
             if (description.isNotEmpty()) {
-                val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-                var location: Location? = null
-                try {
-                    location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-                } catch (e: SecurityException) {
-                    Log.e("AddFragment", "Location permission not granted", e)
+                var latitude: Double? = null
+                var longitude: Double? = null
+
+                // Only retrieve location if the switch is enabled
+                if (binding.locationSwitch.isChecked) {
+                    val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                    try {
+                        val location: Location? = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+                        latitude = location?.latitude
+                        longitude = location?.longitude
+                        Log.d("AddFragment", "Location enabled. Latitude: $latitude, Longitude: $longitude")
+                    } catch (e: SecurityException) {
+                        Log.e("AddFragment", "Location permission not granted", e)
+                    }
+                } else {
+                    Log.d("AddFragment", "Location not enabled. Latitude and Longitude are null.")
                 }
-                val latitude = location?.latitude ?: 0.0
-                val longitude = location?.longitude ?: 0.0
 
                 lifecycleScope.launch {
                     val userPreference = UserPreference.getInstance(requireContext().dataStore)
                     val userSession = userPreference.getSession().first()
                     if (userSession.token.isNotEmpty()) {
+                        Log.d("AddFragment", "Uploading image with description: $description")
+                        if (latitude != null && longitude != null) {
+                            Log.d("AddFragment", "Sending with location: Latitude=$latitude, Longitude=$longitude")
+                        } else {
+                            Log.d("AddFragment", "Sending without location data")
+                        }
+
                         addViewModel.uploadStory(uri, description, latitude, longitude, requireContext())
                     } else {
                         Toast.makeText(requireContext(), "Failed to retrieve token", Toast.LENGTH_SHORT).show()
