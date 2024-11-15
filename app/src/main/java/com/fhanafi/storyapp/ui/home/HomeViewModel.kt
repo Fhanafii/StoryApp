@@ -6,6 +6,7 @@ import androidx.paging.cachedIn
 import com.fhanafi.storyapp.data.StoryRepository
 import com.fhanafi.storyapp.data.UserRepository
 import com.fhanafi.storyapp.data.remote.response.ListStoryItem
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -27,6 +28,7 @@ class HomeViewModel(
     private val refreshTrigger = MutableStateFlow(Unit)
 
     // Stories flow, recreated each time `refreshTrigger` emits
+    @OptIn(ExperimentalCoroutinesApi::class)
     val stories: Flow<PagingData<ListStoryItem>> = refreshTrigger
         .flatMapLatest {
             storyRepository.getPagedStories().cachedIn(viewModelScope)
