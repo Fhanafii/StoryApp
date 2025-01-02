@@ -1,4 +1,3 @@
-# StoryHub
 ![Project Overview](cover.png)
 
 This repository was result for Android intermediate course on dicoding
