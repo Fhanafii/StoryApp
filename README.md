@@ -1,2 +1,2 @@
 # StoryHub
-![Project Overview](IMG/cover.png)
+![Project Overview](cover.png)
