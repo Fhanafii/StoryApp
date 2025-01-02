@@ -8,7 +8,7 @@ Welcome to StoryHub, an application that lets you create and share your stories 
 
 ## Support 🤔
 
-For any issues or questions, feel free to reach out to the me or refer to the comments within the code for guidance.
+For any issues or questions, feel free to reach out to me or refer to the comments within the code for guidance.
 
 ## Features 🚀
 
