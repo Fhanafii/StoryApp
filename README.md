@@ -6,10 +6,6 @@ This repository was result for Android intermediate course on dicoding
 
 Welcome to StoryHub, an application that lets you create and share your stories with the world! Whether you want to document your daily activities, express your creativity, or inspire others, StoryHub is here to help.
 
-## Support 🤔
-
-For any issues or questions, feel free to reach out to me or refer to the comments within the code for guidance.
-
 ## Features 🚀
 
 The application includes several features, such as:
@@ -27,6 +23,10 @@ The application includes several features, such as:
 ```bash
 git clone https://github.com/Fhanafii/storyhub.git
 ```
+
+## Support 🤔
+
+For any issues or questions, feel free to reach out to me or refer to the comments within the code for guidance.
 
 ## Contributing ✨
 
